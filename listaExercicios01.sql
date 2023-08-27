@@ -16,3 +16,8 @@ where autores.nome ='J.K. Rowling';
 select matriculas.curso, alunos.nome from matriculas 
 inner join alunos on matriculas.aluno_id = alunos.id
 where matriculas.curso = 'Engenharia de Software';
+
+-- Atividade 5
+select produto, sum(receita) as receitas_total 
+from vendas 
+group by produto;
