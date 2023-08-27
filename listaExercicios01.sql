@@ -33,3 +33,8 @@ select curso, count(aluno_id) as alunos_curso
 from matriculas 
 inner join alunos on alunos.id = matriculas.aluno_id 
 group by curso;
+
+-- Atividade 8
+select produto, round(avg(receita),2) as receitas_media
+from vendas 
+group by produto;
