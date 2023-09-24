@@ -96,7 +96,7 @@ order by receitas_produto
 limit 1;
 
 -- Atividade 18
-select produto, round(sum(receita)/20,0) as livros_vendidos from vendas group by produto;
+
 
 -- Atividade 19
 select nome, count(aluno_id) as matricula_aluno 
