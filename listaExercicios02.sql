@@ -105,4 +105,23 @@ end;
 //
 -- drop procedure sp_AutorMaisAntigo;
 call sp_AutorMaisAntigo()//
+-- Atividade  9 -----------------------------------------------------------------------------------------------
+create procedure sp_ContarLivrosPorCategoria(in nomeCategoria varchar(100))
+begin
+	declare id_categoria int; 
+    -- Nessa linha é declarada uma variável para o Id da Categoria
+    select Categoria_ID into id_categoria from categoria where nomeCategoria = nome; 
+    -- É atribuido nessa linha o ID da categoria na variável "id_categoria" de acordo com a categoria digitada pelo Usuário
+	select count(Categoria_ID) as QuantidadesLivros from livro where Categoria_ID = id_categoria group by Categoria_ID;
+    -- É feita a contagens de livros por categoria e exibida na tela.
+end;
+//
+-- Atividade  10 -----------------------------------------------------------------------------------------------
+create procedure sp_LivrosESeusAutores()
+begin
+	select Titulo,Nome,Sobrenome from livro inner join autor_livro on livro.Livro_ID = autor_livro.Autor_Livro_ID join autor on autor_livro.Autor_ID = autor.Autor_ID;
+end;
+//
+call sp_LivrosESeusAutores()//
 delimiter ;
+
