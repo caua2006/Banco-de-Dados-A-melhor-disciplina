@@ -1,19 +1,19 @@
 -- 1. Função para Contagem de Livros por Gênero -------------------------------------------------------------------------------
 delimiter //
 
-create procedure total_livros_por_genero( p_nome_Genero varchar(255), out p_qnt_livro_por_genero int)
+create function total_livros_por_genero( p_nome_Genero varchar(255)) returns int deterministic
 begin
 	DECLARE done_loop int default 0;
     DECLARE id_livro_genero int;
 	
-    
+    declare p_qnt_livro_por_genero int default 0;
     DECLARE cursor_livros CURSOR FOR select genero.id 
     from genero 
     inner join livro on livro.id_genero = genero.id 
     where nome_genero = p_nome_Genero;
     declare continue handler for not found set done_loop = 1;
     
-    set p_qnt_livro_por_genero = 0;
+    
 	open cursor_livros;
     
     while(done_loop != 1) do
@@ -25,13 +25,13 @@ begin
     end while;
     
     close cursor_livros;
+    return p_qnt_livro_por_genero;
 end;
 //
 
 delimiter ;
-call total_livros_por_genero('Biografia',@valor_livro);
-select @valor_livro;
 
+select total_livros_por_genero('Romance');
 
 -- 2. Função para Listar Livros de um Autor Específico ------------------------------------------------------------------------
 delimiter //
@@ -72,7 +72,7 @@ call listar_livros_por_autor('Maria','Fernandes');
     
 -- 3. Função para Atualizar Resumos de Livros    ------------------------------------------------------------------------
 delimiter //
-create procedure atualizar_resumos ()
+create function atualizar_resumos () returns varchar(255) deterministic
 begin 
 	DECLARE done_loop int default 0;
     declare id_for_book_cursor int;
@@ -85,16 +85,18 @@ begin
         update livro set resumo = CONCAT(v_resumo_for_book, " Este é um excelente livro!") where id = id_for_book_cursor;
     end while;
     close cursor_update_resumos_livros;
-    select resumo from livro;
+    return "Atualizado";
 end;
 //
 delimiter ;
-call atualizar_resumos();
+select atualizar_resumos();
+select resumo from livro;
+
 
 
 -- 4. Função para Obter a Média de Livros por Editora   ------------------------------------------------------------------------
 delimiter //
-create procedure media_livros_por_editora()
+create function media_livros_por_editora() returns float deterministic
 begin
 	DECLARE done_loop int default 0;
     declare v_id_editora int;
@@ -114,7 +116,7 @@ begin
         if done_loop != 0 then
 			set total_livros = total_livros - qnt_livro_for_editora;
             set v_total_editora = v_total_editora - 1;
-			select round(total_livros/v_total_editora,2);
+			return round(total_livros/v_total_editora,2);
             end if;
     end while;
     close cursor_id_editora;
@@ -122,8 +124,7 @@ end;
 //
 delimiter ;
 
-call media_livros_por_editora();
-
+select media_livros_por_editora();
 --  5. Função para Listar Autores sem Livros Publicados -------------------------------------------------------------------------
 delimiter //
 create procedure autores_sem_livros ()
@@ -155,7 +156,6 @@ begin
 end;
 //
 delimiter ;
-drop procedure autores_sem_livros;
 call autores_sem_livros ();
 
 

@@ -73,13 +73,13 @@ FROM produtos;
 
 -- a) -------------------------------------------------------------------------------------------------------------------
 delimiter //
-create procedure TOTAL_VALOR(in preco float, in qnt_produto integer)
+create function TOTAL_VALOR( preco float,  qnt_produto integer) returns float deterministic
 begin
-	select round(preco * qnt_produto,2) as Valor_total;
+	return round(preco * qnt_produto,2);
 end;
 //
 delimiter ;
-call TOTAL_VALOR(899.99,90);
+select TOTAL_VALOR(100,90);
 -- b) -------------------------------------------------------------------------------------------------------------------
 select * from produtos;
 call TOTAL_VALOR(1234.89,56);
@@ -102,38 +102,40 @@ select sum(IF(quantidade < 50,"Fora de estoque",quantidade))  from produtos;
 
 -- a) -------------------------------------------------------------------------------------------------------------------
 delimiter //
-create procedure FATORIAL_NUM(in num_user bigint)
+create function FATORIAL_NUM(num_user bigint) returns bigint deterministic
 begin
 	declare fatorial_num_user bigint default num_user;
     fatorial_loop: LOOP
 		set fatorial_num_user = fatorial_num_user * (num_user - 1);
         set num_user = num_user - 1;
-        if num_user = 1 then select fatorial_num_user; leave fatorial_loop;
+        if num_user = 1 then return fatorial_num_user; 
+        leave fatorial_loop;
         end if;
     END LOOP fatorial_loop;
     
 end;
 //
 delimiter ;
-call FATORIAL_NUM(5);
+select FATORIAL_NUM(5);
 -- b) -------------------------------------------------------------------------------------------------------------------
 delimiter //
-create procedure f_exponencial(in num_1 int,in num_2 int)
+create function f_exponencial( num_1 int, num_2 int) returns int deterministic
 begin
-	select power(num_1,num_2);
+	return power(num_1,num_2);
 end;
 //
 delimiter ;
-call f_exponencial(3,4);
+select f_exponencial(3,4);
 -- c) -------------------------------------------------------------------------------------------------------------------
 delimiter //
-create procedure sp_isPalindromo(in word varchar(100))
+create function sp_isPalindromo(word varchar(100)) returns boolean deterministic
 begin
-	select if(lower(word) = lower(reverse(word)),1,0) as isPalindromo;
+	return if(lower(word) = lower(reverse(word)),true,false);
 end;
 //
 delimiter ;
-call sp_isPalindromo('Roma é amor');
+drop procedure sp_isPalindromo;
+select sp_isPalindromo('Roma é amor');
 
 
 
